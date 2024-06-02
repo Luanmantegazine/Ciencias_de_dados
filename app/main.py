@@ -20,6 +20,8 @@ def parse_request(data):
 
         if method == "GET" and path == "/":
             return "HTTP/1.1 200 OK\r\n\r\nHello, World!"
+        elif path.startswith("/echo/"):
+            return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(path[6:])}\r\n\r\n{path[6:]}"
         else:
             return "HTTP/1.1 404 Not Found\r\n\r\nNot Found"
     except Exception as e:
