@@ -17,7 +17,22 @@ def parse_request(data):
     try:
         request_data = data.decode().split("\r\n")
         request_line = request_data[0]
-        method, path, http_version = request_line.split()
+        method, path = request_line.split()
+
+        if method == "POST" and path == "/":
+            return "HTTP/1.1 200 OK\r\n\r\n"
+        elif path.starwith("/files"):
+            filename= path[7:]
+            directory = sys.argv[2]
+            file_path = f"{directory}{filename}"
+            print("File Path: ", file_path)
+            try:
+                with open(file_path, "W") as file:
+                    content = data.split("/r/n/r/n")[1]
+                    file.write(content)
+                    return "HTTP/1.1 201 Created\r\n\r\n"
+            except FileNotFoundError:
+                return "HTTP/1.1 404 Not Found\r\n\r\n"
 
         if method == "GET" and path == "/":
             return "HTTP/1.1 200 OK\r\n\r\nHello, World!"
@@ -47,7 +62,6 @@ def parse_request(data):
     except Exception as e:
         print(f"Error parsing request: {e}")
         return "HTTP/1.1 400 Bad Request\r\n\r\nBad Request"
-
 def main():
     print("Server is starting...")
     server_socket = socket.create_server(("localhost", 4221))
