@@ -39,9 +39,9 @@ def parse_request(data):
             try:
                 with open(f"/{directory}/{filename}", "r") as f:
                     body = f.read()
-                return f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {len(body)}\r\n\r\n{body}".encode()
+                return f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {len(body)}\r\n\r\n{body}"
             except Exception as e:
-                return f"HTTP/1.1 404 Not Found\r\n\r\n".encode()
+                return f"HTTP/1.1 404 Not Found\r\n\r\n"
         else:
             return "HTTP/1.1 404 Not Found\r\n\r\nNot Found"
     except Exception as e:
