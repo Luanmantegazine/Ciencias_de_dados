@@ -1,4 +1,5 @@
 import socket
+import sys
 
 def handle_requests(client_socket):
     try:
@@ -32,6 +33,15 @@ def parse_request(data):
                 return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(user_agent)}\r\n\r\n{user_agent}"
             else:
                 return "HTTP/1.1 400 Bad Request\r\n\r\nUser-Agent header not found"
+        elif path.startswith("/files"):
+            directory = sys.argv[2]
+            filename = path[7:]
+            try:
+                with open(f"/{directory}/{filename}", "r") as f:
+                    body = f.read()
+                return f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {len(body)}\r\n\r\n{body}".encode()
+            except Exception as e:
+                return f"HTTP/1.1 404 Not Found\r\n\r\n".encode()
         else:
             return "HTTP/1.1 404 Not Found\r\n\r\nNot Found"
     except Exception as e:
