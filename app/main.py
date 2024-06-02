@@ -22,6 +22,16 @@ def parse_request(data):
             return "HTTP/1.1 200 OK\r\n\r\nHello, World!"
         elif path.startswith("/echo/"):
             return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(path[6:])}\r\n\r\n{path[6:]}"
+        elif path.startswith("/user-agent"):
+            user_agent = None
+            for header in request_data:
+                if header.lower().startswith("user-agent:"):
+                    user_agent = header.split(":", 1)[1].strip()
+                    break
+            if user_agent:
+                return f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(user_agent)}\r\n\r\n{user_agent}"
+            else:
+                return "HTTP/1.1 400 Bad Request\r\n\r\nUser-Agent header not found"
         else:
             return "HTTP/1.1 404 Not Found\r\n\r\nNot Found"
     except Exception as e:
